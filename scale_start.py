@@ -1,5 +1,6 @@
 import asyncio
 import importlib
+import logging
 import typing as t
 
 from concurrent.futures import ProcessPoolExecutor, Future
@@ -7,8 +8,10 @@ from concurrent.futures import ProcessPoolExecutor, Future
 SHARD_COUNT = 6
 WORKERS = 2
 IPC_PORT = 8080
-BOT_PATH = "auto_voice_channels.avc:"
+BOT_PATH = "auto_voice_channels.avc:client"
 BOT_TOKEN = "abc"
+
+logging.basicConfig(level=logging.INFO)
 
 
 def shard_ids_from_cluster(cluster: int, per: int):
@@ -42,12 +45,16 @@ class Manager(Server):
         self._pool: t.Optional[ProcessPoolExecutor] = None
         self._active_proc: t.List[Future] = []
 
+        self.logger = logging.getLogger("avc-shard-manager")
+
     def create_pool(self):
         self._pool = ProcessPoolExecutor(max_workers=self._workers)
+        self.logger.debug("Successfully created process pool of %s workers", str(self._workers))
 
     def shutdown_pool(self):
         if self._pool is not None:
             self._pool.shutdown()
+        self.logger.debug("Process pool has been shutdown")
 
     def _spawn_workers(self, token: str, *args, **kwargs):
         if self._pool is None:
@@ -56,6 +63,7 @@ class Manager(Server):
         for cluster_id, shards in enumerate(self._cluster_packs):
             future = self._pool.submit(self._bot.start_bot, token, cluster_id, shards, *args, **kwargs)
             self._active_proc.append(future)
+            self.logger.info("Created cluster with id: %s", str(cluster_id))
 
     async def _start(self, token: str, *args, **kwargs):
         self._spawn_workers(token, *args, **kwargs)
@@ -68,11 +76,13 @@ class Manager(Server):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.logger.info("Cancelling pending processes...")
         for fut in self._active_proc:
             if not fut.done():
                 fut.cancel()
-
+        self.logger.info("Cancel succeeded")
         self.shutdown_pool()
+        self.logger.info("Pool shutdown successfully.")
 
 
 if __name__ == '__main__':
