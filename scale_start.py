@@ -68,6 +68,10 @@ class Manager(Server):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        for fut in self._active_proc:
+            if not fut.done():
+                fut.cancel()
+
         self.shutdown_pool()
 
 
