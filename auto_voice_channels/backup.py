@@ -1,9 +1,11 @@
 import b2sdk.v1 as b2
-import cfg
 import os
 import shutil
 import sys
 import time
+
+from . import cfg
+
 
 print("Backing up scriptdir:", cfg.SCRIPT_DIR)
 

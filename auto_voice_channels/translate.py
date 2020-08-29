@@ -1,5 +1,5 @@
 import unicodedata
-from utils import match_case
+from .utils import match_case
 
 mc = match_case
 

@@ -1,6 +1,8 @@
 import asyncio
 import os
 import traceback
+import discord
+
 from datetime import datetime
 from copy import deepcopy
 from math import ceil
@@ -8,11 +10,10 @@ from random import choice, seed
 from statistics import mean
 from time import time
 
-import cfg
-import discord
-import translate
-import utils
-from utils import log
+from . import cfg
+from . import translate
+from . import utils
+from .utils import log
 
 try:
     import patreon_info

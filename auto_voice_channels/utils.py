@@ -14,7 +14,7 @@ from requests import get
 from time import time
 from inspect import currentframe as iframe
 
-import cfg
+from . import cfg
 import pytz
 
 
