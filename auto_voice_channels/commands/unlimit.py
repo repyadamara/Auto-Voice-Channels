@@ -1,4 +1,4 @@
-from commands.base import Cmd
+from .base import Cmd
 
 help_text = [
     [
@@ -11,7 +11,7 @@ help_text = [
 
 
 async def execute(ctx, params):
-    from commands import limit
+    from . import limit
     return await limit.command.execute(ctx, ['0'])
 
 
