@@ -1,8 +1,8 @@
 import discord
 import traceback
-from functions import echo, dm_user, esc_md
-from utils import log
-from commands.base import Cmd
+from ..functions import echo, dm_user, esc_md
+from ..utils import log
+from .base import Cmd
 
 help_text = [
     [

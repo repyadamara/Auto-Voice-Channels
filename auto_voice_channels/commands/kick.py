@@ -1,9 +1,9 @@
-import cfg
+from .. import cfg
 import discord
-import utils
-import functions as func
+from .. import utils
+from .. import functions as func
 from math import floor
-from commands.base import Cmd
+from .base import Cmd
 from time import time
 
 help_text = [
