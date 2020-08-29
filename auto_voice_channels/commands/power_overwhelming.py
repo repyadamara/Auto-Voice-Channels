@@ -1,5 +1,5 @@
-import functions as func
-from commands.base import Cmd
+from .. import functions as func
+from .base import Cmd
 
 try:
     import patreon_info

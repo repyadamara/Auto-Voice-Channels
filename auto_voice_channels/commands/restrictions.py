@@ -1,4 +1,4 @@
-from commands.base import Cmd
+from .base import Cmd
 
 help_text = [
     [

@@ -1,6 +1,6 @@
 import discord
-import utils
-from commands.base import Cmd
+from .. import utils
+from .base import Cmd
 
 help_text = [
     [

@@ -1,7 +1,7 @@
-import cfg
+from .. import cfg
 import discord
-import functions as func
-from commands.base import Cmd
+from .. import functions as func
+from .base import Cmd
 
 help_text = [
     [

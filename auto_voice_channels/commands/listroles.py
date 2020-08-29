@@ -1,6 +1,6 @@
-import utils
-from functions import echo
-from commands.base import Cmd
+from .. import utils
+from ..functions import echo
+from .base import Cmd
 
 help_text = [
     [

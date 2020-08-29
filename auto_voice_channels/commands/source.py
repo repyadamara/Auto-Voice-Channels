@@ -1,7 +1,7 @@
 import discord
-from functions import dm_user
-from utils import log
-from commands.base import Cmd
+from ..functions import dm_user
+from ..utils import log
+from .base import Cmd
 
 help_text = [
     [
