@@ -1,8 +1,8 @@
 import discord
 import traceback
-import functions as func
-from commands.base import Cmd
-from utils import log
+from .. import functions as func
+from .base import Cmd
+from ..utils import log
 
 help_text = [
     [
