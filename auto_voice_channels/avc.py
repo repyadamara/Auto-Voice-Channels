@@ -8,6 +8,7 @@ import sys
 import discord
 import psutil
 import pytz
+import typing
 
 from datetime import datetime
 from time import time
@@ -21,6 +22,10 @@ from . import translate
 from . import utils
 from . import functions as func
 from .functions import log, echo
+
+# Automatically Installs UvLoop if it exists.
+from . import auto_installer
+auto_installer.install()
 
 
 logging.basicConfig(level=logging.INFO)
@@ -791,6 +796,13 @@ async def on_message(message):
                                    "Try typing `who am I` to get a list of guilds we're both in")
                 return
             auth_guilds = params_str.replace(' ', '\n').split('\n')
+
+            ctx = {
+                'message': message,
+                'channel': channel,
+                'client': client,
+            }
+
             for auth_guild in auth_guilds:
                 try:
                     g = client.get_guild(int(auth_guild))
@@ -816,11 +828,6 @@ async def on_message(message):
                                    "In the meantime, try asking for help in the support server: "
                                    "https://discord.gg/qhMrz6u".format(type(e).__name__))
 
-            ctx = {
-                'message': message,
-                'channel': channel,
-                'client': client,
-            }
             auth_guilds = [int(g) for g in auth_guilds]
             success, response = await func.power_overwhelming(ctx, auth_guilds)
 
@@ -1111,7 +1118,7 @@ async def on_voice_state_update(member, before, after):
                 except Exception as e:
                     log("Failed to send join-request message ({})".format(type(e).__name__), guild)
                 else:
-                    cfg.JOINS_IN_PROGRESS[member.id]
+                    cfg.JOINS_IN_PROGRESS[member.id]  # todo what is this?
 
     if before.channel:
         if before.channel.id in secondaries:
@@ -1168,8 +1175,16 @@ async def on_guild_remove(guild):
             client)
 
 
-cleanup(client=client, tick_=1)
-for ln, l in loops.items():
-    l.start(client)
-check_patreon.start()
-client.run(TOKEN)
+def start_bot_cluster(token: str, cluster_id: int, shards: typing.List[int], *args, **kwargs):
+
+    # Some hacky method of altering the shards without
+    # causing a big issue.
+    client.shard_count = len(shards)
+    client.shard_ids = shards
+    client.cluster_id = cluster_id
+
+    cleanup(client=client, tick_=1)
+    for ln, l in loops.items():
+        l.start(client)
+    check_patreon.start()
+    client.run(token)
