@@ -1,7 +1,7 @@
 import discord
-import utils
+from .. import utils
 from difflib import SequenceMatcher
-from functions import admin_log, get_secondaries, log
+from ..functions import admin_log, get_secondaries, log
 
 from . import (
     alias,

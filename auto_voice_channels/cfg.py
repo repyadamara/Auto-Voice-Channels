@@ -1,5 +1,5 @@
 import os
-from utils import get_config
+from .utils import get_config
 from time import time
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
