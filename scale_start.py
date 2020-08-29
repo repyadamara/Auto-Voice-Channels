@@ -3,7 +3,10 @@ import importlib
 import logging
 import typing as t
 
+import server
+
 from concurrent.futures import ProcessPoolExecutor, Future
+
 
 SHARD_COUNT = 6
 WORKERS = 2
@@ -18,15 +21,7 @@ def shard_ids_from_cluster(cluster: int, per: int):
     return list(range(per * cluster, per * cluster + per))
 
 
-class Server:
-    def __init__(self, port: int):
-        self._port = port
-
-    async def run_server(self):
-        pass
-
-
-class Manager(Server):
+class Manager(server.Server):
     def __init__(self, shard_count: int, worker_count: int, icp_port: int, bot_path: str):
         super().__init__(icp_port)
 
@@ -61,7 +56,7 @@ class Manager(Server):
             raise ValueError("Process pool has not been initialised yet!")
 
         for cluster_id, shards in enumerate(self._cluster_packs):
-            future = self._pool.submit(self._bot.start_bot, token, cluster_id, shards, *args, **kwargs)
+            future = self._pool.submit(self._bot.start_bot_cluster, token, cluster_id, shards, *args, **kwargs)
             self._active_proc.append(future)
             self.logger.info("Created cluster with id: %s", str(cluster_id))
 
