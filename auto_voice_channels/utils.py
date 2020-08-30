@@ -92,7 +92,7 @@ def write_json(fp, data, indent=1):
 
 @func_timer()
 def get_config():
-    cf = os.path.join(cfg.SCRIPT_DIR, 'config.json')
+    cf = os.path.join("/".join(cfg.SCRIPT_DIR.split("\\")[:-1]), 'config.json')
     if not os.path.exists(cf):
         print("Config file doesn't exist!\n"
               "You need to create a 'config.json' file next to this script and fill in some details like your token.\n"
