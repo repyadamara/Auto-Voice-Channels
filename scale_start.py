@@ -10,8 +10,8 @@ import server
 from concurrent.futures import ProcessPoolExecutor, Future
 
 
-SHARD_COUNT = 6
-WORKERS = 2
+SHARDS_PER_CLUSTER = 1
+WORKERS = 1
 IPC_PORT = 8080
 BOT_PATH = "auto_voice_channels.avc:start_bot_cluster"
 BOT_TOKEN = str(os.getenv("BOT_TOKEN"))
@@ -31,7 +31,9 @@ class Manager(server.Server):
         self._workers = worker_count
 
         self._cluster_packs = [
-            shard_ids_from_cluster(c_id, self._shards // 2) for c_id in range(self._workers)]
+            shard_ids_from_cluster(c_id, shard_count) for c_id in range(self._workers)]
+
+        self._total_shards = sum([len(pack) for pack in self._cluster_packs])
 
         module, attr = bot_path.split(":", maxsplit=1)
         self._avc = importlib.import_module(module)
@@ -58,13 +60,28 @@ class Manager(server.Server):
             raise RuntimeError("Process pool has not been initialised yet!")
 
         for cluster_id, shards in enumerate(self._cluster_packs):
-            future = self._pool.submit(self._starter, token, cluster_id, shards, *args, **kwargs)
+            future = self._pool.submit(
+                self._starter,
+                token,
+                cluster_id,
+                self._total_shards,
+                shards,
+                *args,
+                **kwargs
+            )
             self._active_proc.append(future)
             self.logger.info("Created cluster with id: %s", str(cluster_id))
             time.sleep(2)
 
     async def _start(self, token: str, *args, **kwargs):
         self._spawn_workers(token, *args, **kwargs)
+
+        while True:
+            for fut in self._active_proc:
+                if fut.done():
+                    return
+                await asyncio.sleep(0.5)
+            await asyncio.sleep(1)
 
     def start(self, token: str, *args, **kwargs):
         asyncio.get_event_loop().run_until_complete(self._start(token, *args, **kwargs))
@@ -85,5 +102,5 @@ class Manager(server.Server):
 
 if __name__ == '__main__':
     with Manager(
-            shard_count=SHARD_COUNT, worker_count=WORKERS, icp_port=IPC_PORT, bot_path=BOT_PATH) as m:
+            shard_count=SHARDS_PER_CLUSTER, worker_count=WORKERS, icp_port=IPC_PORT, bot_path=BOT_PATH) as m:
         m.start(token=BOT_TOKEN)
