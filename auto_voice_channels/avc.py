@@ -1176,7 +1176,7 @@ async def on_guild_remove(guild):
 
 
 def start_bot_cluster(token: str, cluster_id: int, shards: typing.List[int], *args, **kwargs):
-
+    print(cluster_id, shards)
     # Some hacky method of altering the shards without
     # causing a big issue.
     client.shard_count = len(shards)

@@ -53,7 +53,7 @@ class Manager(server.Server):
 
     def _spawn_workers(self, token: str, *args, **kwargs):
         if self._pool is None:
-            raise ValueError("Process pool has not been initialised yet!")
+            raise RuntimeError("Process pool has not been initialised yet!")
 
         for cluster_id, shards in enumerate(self._cluster_packs):
             future = self._pool.submit(self._bot.start_bot_cluster, token, cluster_id, shards, *args, **kwargs)
