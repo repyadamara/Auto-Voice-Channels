@@ -1185,7 +1185,6 @@ def start_bot_cluster(
 ):
     # Some hacky method of altering the shards without
     # causing a big issue.
-    print(total_shards, shards)
     client.shard_count = total_shards
     client.shard_ids = shards
     client.cluster_id = cluster_id
