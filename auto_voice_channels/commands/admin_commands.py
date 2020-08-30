@@ -2,15 +2,15 @@ import json
 import os
 import sys
 import traceback
-from datetime import datetime, date
-
-import cfg
-import discord
-import functions as func
 import psutil
 import pytz
-import utils
-from functions import echo, log
+from datetime import datetime, date
+
+from .. import cfg
+import discord
+from .. import functions as func
+from . import utils
+from ..functions import echo, log
 
 try:
     import patreon_info
