@@ -132,7 +132,7 @@ def get_serv_settings(guild, force_refetch=False):
 
     fp = os.path.join(cfg.SCRIPT_DIR, 'guilds', str(guild.id) + '.json')
     if not os.path.exists(fp):
-        write_json(fp, read_json(os.path.join(cfg.SCRIPT_DIR, 'default_settings.json')))
+        write_json(fp, read_json(os.path.join("/".join(cfg.SCRIPT_DIR.split("\\")[:-1]), 'default_settings.json')))
     data = read_json(fp)
 
     # Convert string IDs to ints

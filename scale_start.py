@@ -2,6 +2,8 @@ import asyncio
 import importlib
 import logging
 import typing as t
+import time
+import os
 
 import server
 
@@ -11,8 +13,8 @@ from concurrent.futures import ProcessPoolExecutor, Future
 SHARD_COUNT = 6
 WORKERS = 2
 IPC_PORT = 8080
-BOT_PATH = "auto_voice_channels.avc:client"
-BOT_TOKEN = "abc"
+BOT_PATH = "auto_voice_channels.avc:start_bot_cluster"
+BOT_TOKEN = str(os.getenv("BOT_TOKEN"))
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,8 +35,8 @@ class Manager(server.Server):
 
         module, attr = bot_path.split(":", maxsplit=1)
         self._avc = importlib.import_module(module)
-        self._bot = getattr(self._avc, attr)
-        if self._bot is None:
+        self._starter: t.Callable = getattr(self._avc, attr)
+        if self._starter is None:
             raise ImportError("Could not import and extract bot: {} from file: {}".format(attr, module))
 
         self._pool: t.Optional[ProcessPoolExecutor] = None
@@ -56,9 +58,10 @@ class Manager(server.Server):
             raise RuntimeError("Process pool has not been initialised yet!")
 
         for cluster_id, shards in enumerate(self._cluster_packs):
-            future = self._pool.submit(self._bot.start_bot_cluster, token, cluster_id, shards, *args, **kwargs)
+            future = self._pool.submit(self._starter, token, cluster_id, shards, *args, **kwargs)
             self._active_proc.append(future)
             self.logger.info("Created cluster with id: %s", str(cluster_id))
+            time.sleep(2)
 
     async def _start(self, token: str, *args, **kwargs):
         self._spawn_workers(token, *args, **kwargs)

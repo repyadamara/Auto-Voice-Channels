@@ -1176,7 +1176,8 @@ async def on_guild_remove(guild):
 
 
 def start_bot_cluster(token: str, cluster_id: int, shards: typing.List[int], *args, **kwargs):
-    print(cluster_id, shards)
+    loop_ = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop_)
     # Some hacky method of altering the shards without
     # causing a big issue.
     client.shard_count = len(shards)
@@ -1187,4 +1188,7 @@ def start_bot_cluster(token: str, cluster_id: int, shards: typing.List[int], *ar
     for ln, l in loops.items():
         l.start(client)
     check_patreon.start()
-    client.run(token)
+    try:
+        client.run(token)
+    except Exception as e:
+        return e

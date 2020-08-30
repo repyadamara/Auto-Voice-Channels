@@ -449,6 +449,12 @@ async def blind_echo(msg, guild):
 @utils.func_timer()
 async def admin_log(msg, client, important=False):
     admin = client.get_user(cfg.CONFIG['admin_id'])
+    if admin is None:
+        try:
+            admin = await client.fetch_user(cfg.CONFIG['admin_id'])
+        except discord.HTTPException:
+            return print("Could not DM admin.")
+
     if admin.dm_channel is None:
         await admin.create_dm()
     mention = admin.mention
