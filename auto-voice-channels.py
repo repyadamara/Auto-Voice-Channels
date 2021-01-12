@@ -29,9 +29,9 @@ GOLD_BOT = False
 NUM_SHARDS = cfg.CONFIG['num_shards'] if 'num_shards' in cfg.CONFIG else 0
 if DEV_BOT:
     print("DEV BOT")
-    TOKEN = cfg.CONFIG['token_dev']
+    TOKEN = cfg.CONFIG['Nzk4NDAzMTMxMDIwNTQxOTgy.X_0g3A.0S0Dn91cPIM1TyKvtwxX4Wgbd9k']
 else:
-    TOKEN = cfg.CONFIG['token']
+    TOKEN = cfg.CONFIG['Nzk4NDAzMTMxMDIwNTQxOTgy.X_0g3A.0S0Dn91cPIM1TyKvtwxX4Wgbd9k']
 try:
     sid = int(sys.argv[1])
     if str(sid) in cfg.CONFIG["sapphires"]:
@@ -40,7 +40,7 @@ try:
         NUM_SHARDS = 1
     elif 'gold_id' in cfg.CONFIG and sid == 6666:
         GOLD_BOT = True
-        TOKEN = cfg.CONFIG["token_gold"]
+        TOKEN = cfg.CONFIG["Nzk4NDAzMTMxMDIwNTQxOTgy.X_0g3A.0S0Dn91cPIM1TyKvtwxX4Wgbd9k"]
         NUM_SHARDS = 1
     else:
         print("NO SAPPHIRE WITH ID " + str(sid))
